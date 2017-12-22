@@ -3,6 +3,13 @@ This is a fork of Richard Berry's freeRTOS, optimised for the Arduino AVR device
 It has been created to provide access to FreeRTOS capabilities, with full compatibility to the Arduino environment.
 It does this by keeping hands off almost everything, and only touching the minimum of hardware to be successful.
 
+This special branch is configured for static allocation, giving you
+compile-time control over your SRAM usage. To reduce space, timers were
+disabled (better use a task for that) as well as recursive mutexes (not
+needed when cleanly designed) and task names were reduced to the minimum
+two bytes. To give more room for tasks, the number of possible
+priorities was raised from four to eight.
+
 ## Further Reading
 
 The canonical source for information is the [FreeRTOS Web Site](http://www.freertos.org/ "FreeRTOS").
@@ -28,7 +35,7 @@ Watchdog period options:
 * WDTO_120MS
 * WDTO_250MS
 * WDTO_500MS
-							
+
 Note that Timer resolution is affected by integer math division and the time slice selected. Trying to measure 100ms, using a 60ms time slice for example, won't work.
 
 Stack for the loop() function has been set at 192 bytes. This can be configured by adjusting the configMINIMAL_STACK_SIZE parameter. If you have stack overflow issues, just increase it.
