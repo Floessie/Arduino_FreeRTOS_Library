@@ -73,6 +73,11 @@ static void prvSetupTimerInterrupt( void );
  *
  * r0 is set to __tmp_reg__ as the compiler expects it to be thus.
  *
+ * #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
+ * #define __RAMPZ__ 0x3B
+ * #define __EIND__  0x3C
+ * #endif
+ *
  * The interrupts will have been disabled during the call to portSAVE_CONTEXT()
  * so we need not worry about reading/writing to the stack pointer.
  */
@@ -83,9 +88,9 @@ static void prvSetupTimerInterrupt( void );
                                 "in     __tmp_reg__, __SREG__                   \n\t"   \
                                 "cli                                            \n\t"   \
                                 "push   __tmp_reg__                             \n\t"   \
-                                "in     __tmp_reg__, __RAMPZ__                  \n\t"   \
+                                "in     __tmp_reg__, 0x3B                       \n\t"   \
                                 "push   __tmp_reg__                             \n\t"   \
-                                "in     __tmp_reg__, __EIND__                   \n\t"   \
+                                "in     __tmp_reg__, 0x3C                       \n\t"   \
                                 "push   __tmp_reg__                             \n\t"   \
                                 "push   __zero_reg__                            \n\t"   \
                                 "clr    __zero_reg__                            \n\t"   \
@@ -219,9 +224,9 @@ static void prvSetupTimerInterrupt( void );
                                 "pop    r2                                      \n\t"   \
                                 "pop    __zero_reg__                            \n\t"   \
                                 "pop    __tmp_reg__                             \n\t"   \
-                                "out    __EIND__, __tmp_reg__                   \n\t"   \
+                                "out    0x3C, __tmp_reg__                       \n\t"   \
                                 "pop    __tmp_reg__                             \n\t"   \
-                                "out    __RAMPZ__, __tmp_reg__                  \n\t"   \
+                                "out    0x3B, __tmp_reg__                       \n\t"   \
                                 "pop    __tmp_reg__                             \n\t"   \
                                 "out    __SREG__, __tmp_reg__                   \n\t"   \
                                 "pop    __tmp_reg__                             \n\t"   \
@@ -509,10 +514,7 @@ void prvSetupTimerInterrupt( void )
 	 * the context is saved at the start of vPortYieldFromTick().  The tick
 	 * count is incremented after the context is saved.
 	 *
-	 * use ISR_NOBLOCK where there is an important timer running, that should preempt the scheduler.
-	 *
 	 */
-//	ISR(portSCHEDULER_ISR, ISR_NAKED ISR_NOBLOCK) __attribute__ ((hot, flatten));
 	ISR(portSCHEDULER_ISR, ISR_NAKED) __attribute__ ((hot, flatten));
 	ISR(portSCHEDULER_ISR)
 	{
@@ -526,9 +528,7 @@ void prvSetupTimerInterrupt( void )
 	 * tick count.  We don't need to switch context, this can only be done by
 	 * manual calls to taskYIELD();
 	 *
-	 * use ISR_NOBLOCK where there is an important timer running, that should preempt the scheduler.
 	 */
-//	ISR(portSCHEDULER_ISR, ISR_NOBLOCK) __attribute__ ((hot, flatten));
 	ISR(portSCHEDULER_ISR) __attribute__ ((hot, flatten));
 	ISR(portSCHEDULER_ISR)
 	{

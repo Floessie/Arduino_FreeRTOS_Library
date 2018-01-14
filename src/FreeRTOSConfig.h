@@ -49,7 +49,7 @@
 #define configUSE_TICK_HOOK                 0
 #define configCPU_CLOCK_HZ                  ( ( uint32_t ) F_CPU )			// This F_CPU variable set by the environment
 #define configMAX_PRIORITIES                8
-#define configMINIMAL_STACK_SIZE            ( ( UBaseType_t ) 192 )
+#define configMINIMAL_STACK_SIZE            ( ( portSTACK_TYPE ) 192 )
 #define configMAX_TASK_NAME_LEN             ( 2 )
 #define configUSE_TRACE_FACILITY            0
 #define configUSE_16_BIT_TICKS              1
@@ -71,11 +71,14 @@
 #define configUSE_TIMERS                    0
 #define configTIMER_TASK_PRIORITY           ( ( UBaseType_t ) 3 )
 #define configTIMER_QUEUE_LENGTH            ( ( UBaseType_t ) 10 )
-#define configTIMER_TASK_STACK_DEPTH        ( ( UBaseType_t ) 85 )
+#define configTIMER_TASK_STACK_DEPTH        ( ( portSTACK_TYPE ) 85 )
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES               0
 #define configMAX_CO_ROUTINE_PRIORITIES     ( (UBaseType_t ) 2 )
+
+/* Set the stack depth type to be uint16_t. */
+#define configSTACK_DEPTH_TYPE              uint16_t
 
 /* Set the stack pointer type to be uint16_t, otherwise it defaults to unsigned long */
 #define portPOINTER_SIZE_TYPE               uint16_t
