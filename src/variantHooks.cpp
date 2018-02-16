@@ -73,7 +73,9 @@ void vApplicationIdleHook( void ) __attribute__((weak));
 void vApplicationIdleHook( void )
 {
 	loop();		// the normal Arduino loop() function is run here.
+#ifndef ATTINY_CORE
 	if (serialEventRun) serialEventRun();
+#endif
 }
 
 #endif /* configUSE_IDLE_HOOK == 1 */
