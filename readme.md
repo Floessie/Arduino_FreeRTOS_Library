@@ -15,6 +15,8 @@ priorities was raised from four to eight.
 The canonical source for information is the [FreeRTOS Web Site](http://www.freertos.org/ "FreeRTOS").
 Within this site, the [Getting Started](http://www.freertos.org/FreeRTOS-quick-start-guide.html "Quick Start Guide") page is very useful.
 
+I have a short blog post on [Arduino FreeRTOS](https://feilipu.me/2015/11/24/arduino_freertos/), and another much older post on using [FreeRTOS with AVR](https://feilipu.me/2011/09/22/freertos-and-libraries-for-avr-atmega/), which may be useful to read too. There are some further posts I've written on [Hackster.IO](https://www.hackster.io/feilipu), but they're essentially the same content.
+
 My other [AVRfreeRTOS Sourceforge Repository](https://sourceforge.net/projects/avrfreertos/) or [AVRfreeRTOS Github](https://github.com/feilipu/avrfreertos) has plenty of examples,
 ranging from [blink](https://sourceforge.net/projects/avrfreertos/files/MegaBlink/) through to a [synthesiser](https://sourceforge.net/projects/avrfreertos/files/GA_Synth/).
 
