@@ -3,6 +3,8 @@ This is a fork of Richard Barry's freeRTOS, optimised for the Arduino AVR device
 It has been created to provide access to FreeRTOS capabilities, with full compatibility to the Arduino environment.
 It does this by keeping hands off almost everything, and only touching the minimum of hardware to be successful.
 
+[![Arduino CI](https://github.com/feilipu/Arduino_FreeRTOS_Library/workflows/Arduino%20CI/badge.svg)](https://github.com/marketplace/actions/arduino_ci)
+
 This special branch is configured for static allocation, giving you
 compile-time control over your SRAM usage. To reduce space, timers were
 disabled (better use a task for that) as well as recursive mutexes (not
