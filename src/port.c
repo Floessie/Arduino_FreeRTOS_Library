@@ -42,14 +42,18 @@
 /* Start tasks with interrupts enabled. */
 #define portFLAGS_INT_ENABLED           ( (StackType_t) 0x80 )
 
-#define    portSCHEDULER_ISR            WDT_vect
+#ifndef DXCORE
+	#define    portSCHEDULER_ISR            WDT_vect
+#else
+	#define    portSCHEDULER_ISR            RTC_PIT_vect
+#endif
 
 /*-----------------------------------------------------------*/
 
 /* We require the address of the pxCurrentTCB variable, but don't want to know
 any details of its type. */
-typedef void TCB_t;
-extern volatile TCB_t * volatile pxCurrentTCB;
+typedef void ThreadCB_t;
+extern volatile ThreadCB_t * volatile pxCurrentTCB;
 
 /*-----------------------------------------------------------*/
 
@@ -69,7 +73,7 @@ extern volatile TCB_t * volatile pxCurrentTCB;
     Updated to match avr-libc 2.0.0
 */
 
-#if defined( portUSE_WDTO)
+#if defined( portUSE_WDTO )
 
 static __inline__
 __attribute__ ((__always_inline__))
@@ -135,7 +139,7 @@ void wdt_interrupt_enable (const uint8_t value)
     Updated to match avr-libc 2.0.0
 */
 
-#if defined( portUSE_WDTO)
+#if defined( portUSE_WDTO )
 
 static __inline__
 __attribute__ ((__always_inline__))
@@ -176,6 +180,42 @@ void wdt_interrupt_reset_enable (const uint8_t value)
         );
     }
 }
+#endif
+
+#if defined( portUSE_PIT )
+
+static __inline__
+__attribute__ ((__always_inline__))
+void pit_enable(const uint8_t value)
+{
+    uint8_t temp;
+
+    temp = CLKCTRL.OSC32KCTRLA;
+    temp |= CLKCTRL_RUNSTDBY_bm;
+    _PROTECTED_WRITE(CLKCTRL.OSC32KCTRLA, temp);
+
+    while (CLKCTRL.MCLKSTATUS & CLKCTRL_OSC32KS_bm);
+
+    while (RTC.STATUS);
+
+    RTC.CLKSEL = RTC_CLKSEL_OSC32K_gc;
+
+    RTC.DBGCTRL = RTC_DBGRUN_bm;
+
+    RTC.PITINTCTRL = RTC_PI_bm;
+
+    RTC.PITCTRLA = value | RTC_PITEN_bm;
+}
+
+static __inline__
+__attribute__ ((__always_inline__))
+void pit_disable()
+{
+    RTC.PITINTCTRL &= ~RTC_PI_bm;
+
+    RTC.PITCTRLA &= ~RTC_PITEN_bm;
+}
+
 #endif
 
 /*-----------------------------------------------------------*/
@@ -610,8 +650,13 @@ void vPortEndScheduler( void )
 {
 	/* It is unlikely that the ATmega port will get stopped.  If required simply
      * disable the tick interrupt here. */
+#ifdef portUSE_WDTO
+    wdt_disable();      /* disable Watchdog Timer */
+#endif
 
-        wdt_disable();      /* disable Watchdog Timer */
+#ifdef portUSE_PIT
+    pit_disable();
+#endif
 }
 /*-----------------------------------------------------------*/
 
@@ -671,11 +716,19 @@ void vPortYieldFromTick( void )
  */
 void prvSetupTimerInterrupt( void )
 {
+#ifdef portUSE_WDTO
     /* reset watchdog */
     wdt_reset();
 
     /* set up WDT Interrupt (rather than the WDT Reset). */
     wdt_interrupt_enable( portUSE_WDTO );
+#endif
+
+#ifdef portUSE_PIT
+//	PORTD.OUT |= PIN6_bm;
+//	PORTD.DIR |= PIN6_bm;
+	pit_enable(portUSE_PIT);
+#endif
 }
 /*-----------------------------------------------------------*/
 
@@ -694,7 +747,12 @@ void prvSetupTimerInterrupt( void )
  */
     ISR(portSCHEDULER_ISR)
     {
-        vPortYieldFromTick();
+	#ifdef portUSE_PIT
+		RTC.PITINTFLAGS = RTC_PI_bm;
+		PORTD.DIR |= PIN6_bm;
+		PORTD.OUTTGL |= PIN6_bm;
+	#endif
+		vPortYieldFromTick();
         __asm__ __volatile__ ( "reti" );
     }
 #else
@@ -711,6 +769,11 @@ void prvSetupTimerInterrupt( void )
  */
     ISR(portSCHEDULER_ISR)
     {
+	#ifdef portUSE_PIT
+		RTC.PITINTFLAGS = RTC_PI_bm;
+		PORTD.DIR |= PIN6_bm;
+		PORTD.OUTTGL |= PIN6_bm;
+	#endif
         xTaskIncrementTick();
     }
 #endif

@@ -54,6 +54,7 @@ void initVariant(void)
 #endif
 
     setup();                    // the normal Arduino setup() function is run here.
+
     vTaskStartScheduler();      // initialise and run the freeRTOS scheduler. Execution should never return here.
 }
 
@@ -86,7 +87,7 @@ void vApplicationIdleHook( void )
 /**
  * Private function to enable board led to use it in application hooks
  */
-void prvSetMainLedOn( void ) 
+void prvSetMainLedOn( void )
 {
 
 #if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__) // Arduino Mega with 2560
@@ -112,7 +113,7 @@ void prvSetMainLedOn( void )
 /**
  * Private function to blink board led to use it in application hooks
  */
-void prvBlinkMainLed( void ) 
+void prvBlinkMainLed( void )
 {
 
 #if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)  // Mega with 2560
@@ -154,7 +155,7 @@ void vApplicationMallocFailedHook( void ) __attribute__((weak));
 void vApplicationMallocFailedHook( void )
 {
     prvSetMainLedOn(); // Main LED on.
-    
+
     for(;;)
     {
         _delay_ms(50);
