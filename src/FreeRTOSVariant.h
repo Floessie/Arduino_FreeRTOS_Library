@@ -30,8 +30,6 @@
 extern "C" {
 #endif
 
-#include <avr/io.h>
-
 #ifndef DXCORE
     #include <avr/wdt.h>
 

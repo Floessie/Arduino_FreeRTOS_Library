@@ -52,8 +52,8 @@
 
 /* We require the address of the pxCurrentTCB variable, but don't want to know
 any details of its type. */
-typedef void ThreadCB_t;
-extern volatile ThreadCB_t * volatile pxCurrentTCB;
+typedef void RTOS_TCB_t;
+extern volatile RTOS_TCB_t * volatile pxCurrentTCB;
 
 /*-----------------------------------------------------------*/
 
